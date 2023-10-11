@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ns0:HTDResponseOrderData
+	xmlns:ns0="http://www.ebics.org/H003"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ebics.org/H003 http://www.ebics.org/H003/ebics_orders.xsd">
+	<ns0:PartnerInfo>
+		<ns0:AddressInfo>
+			<ns0:Name>USERCLI</ns0:Name>
+			<ns0:Street>3, rue de la Brasserie Gruber</ns0:Street>
+			<ns0:PostCode>77000</ns0:PostCode>
+			<ns0:City>MELUN</ns0:City>
+			<ns0:Country>FR</ns0:Country>
+		</ns0:AddressInfo>
+		<ns0:BankInfo>
+			<ns0:HostID>EBIXQUAL</ns0:HostID>
+		</ns0:BankInfo>
+		<ns0:AccountInfo ID="FR7600002000105555555555521" Currency="EUR" Description="Compte Titulaire2 1">
+			<ns0:AccountNumber international="true">FR7600002000105555555555521</ns0:AccountNumber>
+			<ns0:BankCode Prefix="FR" international="true">PTSBFRLLXXX</ns0:BankCode>
+			<ns0:AccountHolder>User 2</ns0:AccountHolder>
+		</ns0:AccountInfo>
+		<ns0:AccountInfo ID="FR7600002000106666666666652" Currency="EUR" Description="Compte Titulaire2 2">
+			<ns0:AccountNumber international="true">FR7600002000106666666666652</ns0:AccountNumber>
+			<ns0:BankCode Prefix="FR" international="true">PTSBFRLLXXX</ns0:BankCode>
+			<ns0:AccountHolder>User 2</ns0:AccountHolder>
+		</ns0:AccountInfo>
+		<ns0:OrderInfo>
+			<ns0:OrderType>FUL</ns0:OrderType>
+			<ns0:TransferType>Upload</ns0:TransferType>
+			<ns0:Description>Transférer des fichiers</ns0:Description>
+			<ns0:NumSigRequired>0</ns0:NumSigRequired>
+		</ns0:OrderInfo>
+		<ns0:OrderInfo>
+			<ns0:OrderType>FUL</ns0:OrderType>
+			<ns0:TransferType>Upload</ns0:TransferType>
+			<ns0:Description>Transférer des fichiers</ns0:Description>
+			<ns0:NumSigRequired>0</ns0:NumSigRequired>
+		</ns0:OrderInfo>
+		<ns0:OrderInfo>
+			<ns0:OrderType>FDL</ns0:OrderType>
+			<ns0:TransferType>Download</ns0:TransferType>
+			<ns0:Description>Télécharger des fichiers</ns0:Description>
+		</ns0:OrderInfo>
+		<ns0:OrderInfo>
+			<ns0:OrderType>FDL</ns0:OrderType>
+			<ns0:TransferType>Download</ns0:TransferType>
+			<ns0:Description>Télécharger des fichiers</ns0:Description>
+		</ns0:OrderInfo>
+	</ns0:PartnerInfo>
+	<ns0:UserInfo>
+		<ns0:UserID Status="4">USER2</ns0:UserID>
+		<ns0:Name>M User 2</ns0:Name>
+		<ns0:Permission AuthorisationLevel="T">
+			<ns0:OrderTypes>FUL</ns0:OrderTypes>
+			<ns0:AccountID>FR7600002000106666666666652</ns0:AccountID>
+		</ns0:Permission>
+		<ns0:Permission AuthorisationLevel="T">
+			<ns0:OrderTypes>FUL</ns0:OrderTypes>
+			<ns0:AccountID>FR7600002000105555555555521</ns0:AccountID>
+		</ns0:Permission>
+		<ns0:Permission>
+			<ns0:OrderTypes>FDL</ns0:OrderTypes>
+		</ns0:Permission>
+		<ns0:Permission>
+			<ns0:OrderTypes>FDL</ns0:OrderTypes>
+		</ns0:Permission>
+	</ns0:UserInfo>
+</ns0:HTDResponseOrderData>
