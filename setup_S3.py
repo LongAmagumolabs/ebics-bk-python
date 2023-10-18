@@ -18,12 +18,8 @@ def b36encode(number):
         number, i = divmod(number, 36)
         base36 = chars[i] + base36
     return base36 or "0"
-
-
 def b36decode(number):
     return int(number, 36)
-
-
 class EbicsBank(EbicsBank):
     """
     EBICS protocol version H003 requires generation of the OrderID.
