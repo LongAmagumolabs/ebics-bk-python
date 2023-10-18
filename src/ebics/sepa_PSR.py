@@ -1,6 +1,5 @@
 import os
 import json
-import requests
 import xml.etree.ElementTree as ET
 import fintech
 import requests
@@ -46,14 +45,10 @@ class EbicsBank(EbicsBank):
     
 keyring = EbicsKeyRing(keys='./keys/mykeys_long', passphrase='mysecret')
 bank = EbicsBank(keyring=keyring, hostid='EBIXQUAL', url='https://server-ebics.webank.fr:28103/WbkPortalFileTransfert/EbicsProtocol')
-user = EbicsUser(keyring=keyring, partnerid='LONGAMA', userid='LONGAMA', transport_only = True)
+user = EbicsUser(keyring=keyring, partnerid='LONG', userid='LONG', transport_only = True)
 
 client = EbicsClient(bank, user, version = 'H003')
 
 # xml = client.CRZ(start='2023-10-16', end='2023-10-17')
-
-cert = user.export_certificates()
-
-user.create_ini_letter(bankname='Long Bnaks', path='./letter/ini_letter_longama.pdf')
-
-print(cert)
+xml = client.Z01(start='2023-10-16', end='2023-10-17')
+print(xml)

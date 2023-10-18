@@ -3,9 +3,13 @@ import json
 import xml.etree.ElementTree as ET
 import fintech
 import requests
+import boto3
 fintech.register()
+
 from fintech.sepa import Account, SEPACreditTransfer, SEPATransaction
 from fintech.ebics import EbicsKeyRing, EbicsBank, EbicsUser, EbicsClient, BusinessTransactionFormat
+
+s3_client = boto3.client('s3')
 
 def b36encode(number):
     chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -20,32 +24,61 @@ def b36decode(number):
 
 
 class EbicsBank(EbicsBank):
-
-    order_ids_path = './order/order_ids.json'
+    """
+    EBICS protocol version H003 requires generation of the OrderID.
+    The OrderID must be a string between 'A000' and 'ZZZZ' and
+    unique for each partner id.
+    """
+    order_ids_s3_bucket = 'ebics-test-bucket'
+    order_ids_s3_key = 'order/order_ids.json'
 
     def _next_order_id(self, partnerid):
-        """
-        Generate an order id uniquely for each partner id
-        Must be a string between 'A000' and 'ZZZZ'
-        """
-        if not os.path.exists(self.order_ids_path):
-            with open(self.order_ids_path, 'w') as fh:
-                fh.write('{}')
+        # Initialize AWS S3 client
+        s3 = boto3.client('s3')
 
-        with open(self.order_ids_path, 'r+') as fh:
-            order_ids = json.load(fh)
-            order_id = order_ids.setdefault(partnerid, 'A000')
-            diff = (b36decode(order_id) - 466559) % 1213056
-            order_ids[partnerid] = b36encode(466560 + diff)
-            fh.truncate(0)
-            fh.seek(0)
-            json.dump(order_ids, fh, indent=4)
+        try:
+            # Try to fetch 'order_ids.json' from S3
+            order_ids = json.loads(s3.get_object(Bucket=self.order_ids_s3_bucket, Key=self.order_ids_s3_key)['Body'].read().decode('utf-8'))
+        except s3.exceptions.NoSuchKey:
+            # If the file doesn't exist on S3, create it
+            order_ids = {}
+
+        order_id = order_ids.setdefault(partnerid, "A000")
+        diff = (b36decode(order_id) - 466559) % 1213056
+        order_ids[partnerid] = b36encode(466560 + diff)
+
+        # Save 'order_ids.json' back to S3
+        s3.put_object(Bucket=self.order_ids_s3_bucket, Key=self.order_ids_s3_key, Body=json.dumps(order_ids, indent=4))
 
         return order_id
+
+class MyKeyRing(EbicsKeyRing):
+    def _write(self, keydict):
+        uploadByteStream = bytes(json.dumps(keydict).encode('UTF-8'))
+        print(uploadByteStream)
+        s3_client.put_object(Bucket = 'ebics-test-bucket', Key = 'keys/mykeys5', Body = uploadByteStream)
+
+s3_bucket = 'ebics-test-bucket'
+passphrase = 'mysecret'
+s3_key = 'keys/mykeys5'
+
+keydict = {}
+# load keys from s3
+try:
+    res = s3_client.get_object(Bucket=s3_bucket, Key=s3_key)
+    keys = res['Body']
+    keydict = json.loads(keys.read())
+    print(json.dumps(keydict))
+    print(keydict)
+    # print(json.dumps(keydict))
+except s3_client.exceptions.NoSuchKey as e:
+    print(f"directory {s3_key} does not exist in S3.")
+except Exception as e:
+    print(f"different error: {str(e)}")
     
-keyring = EbicsKeyRing(keys='./keys/mykeys_long', passphrase='mysecret')
+keyring = MyKeyRing(keydict, 'mysecret')
 bank = EbicsBank(keyring=keyring, hostid='EBIXQUAL', url='https://server-ebics.webank.fr:28103/WbkPortalFileTransfert/EbicsProtocol')
-user = EbicsUser(keyring=keyring, partnerid='LONG', userid='LONG', transport_only = True)
+user = EbicsUser(keyring=keyring, partnerid='AMAGUMOTEST243', userid='AMAGUMOTEST243', transport_only = True)
 
 client = EbicsClient(bank, user, version = 'H003')
 
@@ -64,7 +97,8 @@ trans = sct.add_transaction(creditor2, 10.00, 'tien nha', due_date = '2023-10-15
 # Render the SEPA document
 data = sct.render()
 uploadId = client.FUL(filetype = 'xml', data = sct.render(), TEST = 'True')
-print(uploadId)
+
+
 
 # btf = BusinessTransactionFormat(
 #     service='SCT',
@@ -91,7 +125,7 @@ print(uploadId)
 # print(datas)
 root = ET.fromstring(data)
 tree = ET.ElementTree(root)
-tree.write('./letter/sct_long.xml', encoding='utf-8', xml_declaration=True)
+tree.write('./letter/sct.xml', encoding='utf-8', xml_declaration=True)
 # count = fintech.iban.get_bic('FR7600002000106666666666652')
 # print(count)
 # print(uploadId)

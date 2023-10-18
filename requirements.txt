@@ -1,4 +1,2 @@
 fintech
-jinja2
-requests
 kontocheck

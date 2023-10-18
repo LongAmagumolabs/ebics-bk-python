@@ -2,8 +2,8 @@
 <ns0:Document xmlns:ns0="urn:iso:std:iso:20022:tech:xsd:pain.001.001.03">
   <ns0:CstmrCdtTrfInitn>
     <ns0:GrpHdr>
-      <ns0:MsgId>08DBB06E4F2F4EB9B5CD5786167F20FB</ns0:MsgId>
-      <ns0:CreDtTm>2023-10-16T02:25:53Z</ns0:CreDtTm>
+      <ns0:MsgId>01643861EF8840CEBDD3813A06330E8B</ns0:MsgId>
+      <ns0:CreDtTm>2023-10-17T03:53:26Z</ns0:CreDtTm>
       <ns0:NbOfTxs>2</ns0:NbOfTxs>
       <ns0:CtrlSum>20.00</ns0:CtrlSum>
       <ns0:InitgPty>
@@ -11,7 +11,7 @@
       </ns0:InitgPty>
     </ns0:GrpHdr>
     <ns0:PmtInf>
-      <ns0:PmtInfId>2FAD0C4EE4505D72BCBBE393CEAB11A8</ns0:PmtInfId>
+      <ns0:PmtInfId>02BBFDBD0A225C44960EDEDAA29BA23D</ns0:PmtInfId>
       <ns0:PmtMtd>TRF</ns0:PmtMtd>
       <ns0:BtchBookg>true</ns0:BtchBookg>
       <ns0:NbOfTxs>2</ns0:NbOfTxs>
@@ -40,7 +40,7 @@
       <ns0:ChrgBr>SLEV</ns0:ChrgBr>
       <ns0:CdtTrfTxInf>
         <ns0:PmtId>
-          <ns0:InstrId>0ED4F626D2AC50158F5E27D6AC5BA00B</ns0:InstrId>
+          <ns0:InstrId>21D8F19E257551C689FC37477A1C739F</ns0:InstrId>
           <ns0:EndToEndId>FR99</ns0:EndToEndId>
         </ns0:PmtId>
         <ns0:Amt>
@@ -60,7 +60,7 @@
       </ns0:CdtTrfTxInf>
       <ns0:CdtTrfTxInf>
         <ns0:PmtId>
-          <ns0:InstrId>6B819B29B87A5C9B9E05C338DA63AD95</ns0:InstrId>
+          <ns0:InstrId>84820937196F51DCB12A658998AB547E</ns0:InstrId>
           <ns0:EndToEndId>NOTPROVIDED</ns0:EndToEndId>
         </ns0:PmtId>
         <ns0:Amt>
