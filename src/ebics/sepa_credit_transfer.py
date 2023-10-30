@@ -47,51 +47,33 @@ keyring = EbicsKeyRing(keys='./keys/mykeys_long', passphrase='mysecret')
 bank = EbicsBank(keyring=keyring, hostid='EBIXQUAL', url='https://server-ebics.webank.fr:28103/WbkPortalFileTransfert/EbicsProtocol')
 user = EbicsUser(keyring=keyring, partnerid='LONG', userid='LONG', transport_only = True)
 
+# keyring = EbicsKeyRing(keys='./keys/mykeyspostfinance', passphrase='mysecret')
+# bank = EbicsBank(keyring=keyring, hostid='PFEBICS', url='https://isotest.postfinance.ch/ebicsweb/ebicsweb')
+# user = EbicsUser(keyring=keyring, partnerid='PFC00532', userid='PFC00532')
+
 client = EbicsClient(bank, user, version = 'H003')
 
-# Create the debtor account from an IBAN
+# Create the debtor account from an IBAN // con nợ
 debtor = Account(('FR7600002000105555555555521','BNPAFRPPXXX'), 'HAOAO')
-# Create the creditor account from a tuple (IBAN, BIC)
+# Create the creditor account from a tuple (IBAN, BIC) // chủ nợ
 creditor = Account('FR7600002000106666666666652', 'Long')
-creditor2 = Account('FR7617515900000497026130714', 'Hung')
+# creditor2 = Account('FR7617515900000497026130714', 'Hung')
 # Create a SEPACreditTransfer instance
 sct = SEPACreditTransfer(debtor, scheme = 'pain.001.001.03')
 # sct = SEPATransaction(debtor, type = 'HIGH', cat_purpose = 'SALA')
 # Add the transaction
-purpose = ('code1','landing pep')
-trans = sct.add_transaction(creditor, 10.00, 'tien dien', due_date = '2023-10-15', eref  = 'FR99') 
-trans = sct.add_transaction(creditor2, 10.00, 'tien nha', due_date = '2023-10-15')
+
+trans = sct.add_transaction(creditor, 10.00, 'tien dien') 
 # Render the SEPA document
 data = sct.render()
-uploadId = client.FUL(filetype = 'xml', data = sct.render(), TEST = 'True')
+uploadId = client.FUL(filetype = 'XML', data = data)
 print(uploadId)
 
-# btf = BusinessTransactionFormat(
-#     service='SCT',
-#     msg_name='pain.001',
-#     variant = '001',
-#     version = '03',
-#     scope = 'FR',
-#     format = 'XML'
-# )
-# btd = BusinessTransactionFormat(
-#     service='PSR',
-#     msg_name='pain.002'
-# )
-# datas = client.BTU(btf, data)
-# datas = client.BTD(btd)
-
-# response = requests.post('https://www.bankrechner.org/ebics/EbicsServlet', sct.render())
-
-# uploadId = client.XE2(sct.render())
-# response = client.BTU(btf)
-# camtZ01 = client.Z01()
-# print(camtZ01)
-# datas = client.Z01()
-# print(datas)
+# with open('./letter/C001.xml') as file:
+#     data2 = file.read()
+#     print(data2)
+# uploadId = client.XE2(data2)
+# print(uploadId)
 root = ET.fromstring(data)
 tree = ET.ElementTree(root)
-tree.write('./letter/sct_long.xml', encoding='utf-8', xml_declaration=True)
-# count = fintech.iban.get_bic('FR7600002000106666666666652')
-# print(count)
-# print(uploadId)
+tree.write('./letter/sct_long_test.xml', encoding='utf-8', xml_declaration=True)

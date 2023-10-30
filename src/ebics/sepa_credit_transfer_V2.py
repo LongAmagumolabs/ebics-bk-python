@@ -4,8 +4,9 @@ import xml.etree.ElementTree as ET
 import fintech
 import requests
 fintech.register()
-from fintech.sepa import Account, SEPACreditTransfer, SEPATransaction
-from fintech.ebics import EbicsKeyRing, EbicsBank, EbicsUser, EbicsClient, BusinessTransactionFormat
+from decimal import Decimal
+from sepa_generator.core import Account, SEPACreditTransfer, Amount
+from fintech.ebics import EbicsKeyRing, EbicsBank, EbicsUser, EbicsClient
 
 def b36encode(number):
     chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -43,14 +44,25 @@ class EbicsBank(EbicsBank):
 
         return order_id
     
-keyring = EbicsKeyRing(keys='./keys/mykeyspostfinance', passphrase='mysecret')
-bank = EbicsBank(keyring=keyring, hostid='PFEBICS', url='https://isotest.postfinance.ch/ebicsweb/ebicsweb')
-user = EbicsUser(keyring=keyring, partnerid='PFC00532', userid='PFC00532')
+keyring = EbicsKeyRing(keys='./keys/mykeys_long', passphrase='mysecret')
+bank = EbicsBank(keyring=keyring, hostid='EBIXQUAL', url='https://server-ebics.webank.fr:28103/WbkPortalFileTransfert/EbicsProtocol')
+user = EbicsUser(keyring=keyring, partnerid='LONG', userid='LONG', transport_only = True)
 
 client = EbicsClient(bank, user, version = 'H003')
 
-# xml = client.CRZ(start='2023-10-22', end='2023-10-23')
-# xml = client.Z01(start='2023-10-22', end='2023-10-23')
-xml = client.Z53(start='2023-10-24', end='2023-10-25')
-# xml = client.C53(start='2023-10-24', end='2023-10-25')
-print(xml)
+debtor = Account(iban='FR7600002000105555555555521', bic='BNPAFRPPXXX', name='HAOAO',)
+
+creditor = Account(iban='FR7600002000106666666666652', bic='', name='Long')
+
+sepa_transfer = SEPACreditTransfer(debtor=debtor)
+
+sepa_transfer.add_transaction(creditor=creditor, amount=Amount(Decimal('100.10')), purpose='credit transfer', eref='FR99', ext_purpose='OTHR', cref='SI0020170504058')
+
+
+data = sepa_transfer.render_xml()
+uploadId = client.FUL(filetype = 'xml', data = data, TEST = 'True')
+print(uploadId)
+
+root = ET.fromstring(data)
+tree = ET.ElementTree(root)
+tree.write('./letter/sct_long_v2.xml', encoding='utf-8', xml_declaration=True)

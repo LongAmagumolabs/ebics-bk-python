@@ -1,8 +1,13 @@
 import os
+import io
 import json
-import fintech
 import xml.etree.ElementTree as ET
+import fintech
+import requests
 fintech.register()
+from pypdf import PdfReader
+from jinja2 import Environment, FileSystemLoader
+from fintech.sepa import Account, SEPACreditTransfer, SEPATransaction
 from fintech.ebics import EbicsKeyRing, EbicsBank, EbicsUser, EbicsClient, BusinessTransactionFormat
 
 def b36encode(number):
@@ -41,35 +46,24 @@ class EbicsBank(EbicsBank):
 
         return order_id
     
-keyring = EbicsKeyRing(keys='./keys/mykeys', passphrase='mysecret')
-bank = EbicsBank(keyring=keyring, hostid='BLBANK', url='https://www.bankrechner.org/ebics/EbicsServlet')
-user = EbicsUser(keyring=keyring, partnerid='DEMO12870', userid='DEMO12870')
+keyring = EbicsKeyRing(keys='./keys/mykeys_long', passphrase='mysecret')
+bank = EbicsBank(keyring=keyring, hostid='EBIXQUAL', url='https://server-ebics.webank.fr:28103/WbkPortalFileTransfert/EbicsProtocol')
+user = EbicsUser(keyring=keyring, partnerid='LONG', userid='LONG', transport_only = True)
 
-client = EbicsClient(bank, user, version='H005')
+# user.create_ini_letter(bankname='AmagumoBanks', path='./letter/ini_letter21102.pdf')
+# cert = user.export_certificates()
+# cert_str = json.dumps(cert, indent=4) 
+# with open(f'test2', 'w') as fh:
+#     fh.write(cert_str)
+# print(name)
+client = EbicsClient(bank, user, version = 'H003')
 
-btf = BusinessTransactionFormat(
-    service='SCT',
-    msg_name='pain.001',
-    variant = '001',
-    version = '03',
-    scope = 'FR',
-    format = 'XML'
-)
-data = BTU(btf, data)
-# btf = BusinessTransactionFormat(
-#     service='EOP',
-#     msg_name='pain.008',
-#     format='XML',
-# )
-
-# data = client.BTD(btf, start='2023-09-29', end='2023-09-30')
-# data = client.STA()
-# data = client.FDL(filetype='camt.xxx.cfonb120.stm', start='2023-10-01', end='2023-10-03')
-# data = client.download('A013')
-# data = client.HEV()
-# bank._next_order_id()
-data = client.HTD()
-root = ET.fromstring(data)
-tree = ET.ElementTree(root)
-tree.write('./letter/info.xml', encoding='utf-8', xml_declaration=True)
-print(data)
+pdf = user.create_ini_letter(bankname='AmagumoBanks')
+TplEnv = Environment(loader=FileSystemLoader('letter/'))
+Tpl_letter = TplEnv.get_template('letter.txt')
+print(pdf)
+pdf_stream = io.BytesIO(pdf)
+print(pdf_stream)
+reader = PdfReader(pdf_stream)
+number_of_pages = len(reader.pages)
+print(number_of_pages)

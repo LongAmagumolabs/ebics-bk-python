@@ -1,2 +1,4 @@
 fintech
-kontocheck
+pypdf
+pytz
+jinja2

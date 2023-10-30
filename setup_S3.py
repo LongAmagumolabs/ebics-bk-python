@@ -54,20 +54,19 @@ class MyKeyRing(EbicsKeyRing):
         uploadByteStream = bytes(json.dumps(keydict).encode('UTF-8'))
         s3_client.put_object(Bucket = s3_bucket, Key = s3_key, Body = uploadByteStream)
 
-keydict = {}
 # load keys from s3
 try:
     res = s3_client.get_object(Bucket=s3_bucket, Key=s3_key)
     keys = res['Body']
     keydict = json.loads(keys.read())
-    # print(json.dumps(keydict))
 except s3_client.exceptions.NoSuchKey as e:
-    print(f"directory {s3_key} does not exist in S3.")
+    keydict = {}
 except Exception as e:
-    print(f"different error: {str(e)}")
-
+    print(f"error: {str(e)}")
 
 keyring = MyKeyRing(keydict, 'mysecret')
+
+
 bank = EbicsBank(
     keyring=keyring,
     hostid="EBIXQUAL",
