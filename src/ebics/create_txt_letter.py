@@ -98,7 +98,7 @@ for page in range(number_of_pages):
                             pdf.cell(0, fontsize_mm, wrap, ln=1)
                             pdf.ln()  # Add empty line below each line
 
-            pdf.output(f'{versions[page]}.pdf', 'F')
+            pdf.output(f'letter/{versions[page]}.pdf', 'F')
 
             # Xuất PDF ra chuỗi
             # pdf_output = pdf.output(dest='S')

@@ -62,4 +62,4 @@ for line in splitted:
         pdf.cell(2, fontsize_mm, wrap, ln=1)
     pdf.ln()  # Add empty line below each line
 
-pdf.output('file3.pdf', 'F')
+pdf.output('letter/file3.pdf', 'F')

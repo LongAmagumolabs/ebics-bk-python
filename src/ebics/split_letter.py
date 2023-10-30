@@ -11,7 +11,7 @@ with open("./letter/ini_letter_cert.pdf", "rb") as pdf_file:
         pdf_writer.add_page(pdf_reader.pages[page_number])
 
         # Create a file name for the current page
-        output_filename = f"trang_{page_number + 1}.pdf"
+        output_filename = f"letter/trang_{page_number + 1}.pdf"
 
         # Write the page to a separate file
         with open(output_filename, "wb") as output_file:
